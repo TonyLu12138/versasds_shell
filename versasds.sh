@@ -185,130 +185,68 @@ echo "-------------------------------------------------------------------"
 vsdsadm_path="${VSDS_PATH}/vsdsadm-v1.0.0/vsdsadm"
 
 if [ -f "${vsdsadm_path}" ]; then
-    # echo "配置 LVM 和 LINSTOR 集群"
-    # while true; do
-    #     echo "* * * * * * * * * * * * * * * * * * * * * * * * * * *"
-    #     echo "  提示：集群所有节点未配置好vg之前暂时不要进行pool和资源的操作"
-    #     echo "  创建pool和资源之前请先开启linstor-controller"
-    #     echo "  请选择要执行的操作(1~6):"
-    #     echo "  1: 集群节点配置"
-    #     echo "  2: 创建vg"
-    #     echo "  3: 创建thin pool（请先进行1/2配置）"
-    #     echo "  4: 创建thick pool（请先进行1/2配置）"
-    #     echo "  5: 创建资源（请先创建Storage Pool）"
-    #     echo "  6: 结束"
-    #     echo "* * * * * * * * * * * * * * * * * * * * * * * * * *"
-    #     read choice1
-    #     case $choice1 in
-    #     	1) 
-    #             echo "请输入节名和 ip"
-    #             read nodename ip
-    #             cd "${VSDS_PATH}/vsdsadm-v1.0.0"
-    #             ./vsdsadm stor node create ${nodename} -ip ${ip}
-    #             linstor controller sp DrbdOptions/AutoEvictAllowEviction false
-    #             ;;
-    #         2) 
-    #             echo "请输入 vg 名"
-    #             read vgname
-    #             echo "请输入 device（输入多个device请以“ ”隔开）"
-    #             read -a devices
-    #             cd "${VSDS_PATH}/vsdsadm-v1.0.0"
-    #             ./vsdsadm stor lvm create ${vgname} -t vg -d ${devices[@]}
-    #             ;;
-    #         3) 
-    #             echo "请输入节点名、thinpool 名和 vg 名"
-    #             read node thinpool vgname
-    #             cd "${VSDS_PATH}/vsdsadm-v1.0.0"
-    #             ./vsdsadm stor lvm create thlv -t thinpool -vg ${vgname}
-    #             ./vsdsadm stor storagepool create ${thinpool} -n ${node} -tlv ${vgname}/thlv
-    #             ;;
-    #         4) 
-    #             echo "请输入节点名、 thickpool 名和 vg 名"
-    #             read node thickpool vgname
-    #             cd "${VSDS_PATH}/vsdsadm-v1.0.0"
-    #             ./vsdsadm stor storagepool create ${thickpool} -n ${node} -lvm ${vgname}
-    #             ;;
-    #         5) 
-    #             echo "请输入资源名"
-    #             read resource
-    #             echo "请输入diskful节点名，节点名之间以“ ”隔开"
-    #             read -a diskfuls
-    #             echo "请输入diskless节点名，节点名之间以“ ”隔开"
-    #             read -a disklesses
-    #             echo "请输入资源的size"
-    #             read size
-    #             echo "请输入存储池名字"
-    #             read storagepool
-    #             cd "${VSDS_PATH}/vsdsadm-v1.0.0"
-    #             ./vsdsadm stor resource create ${resource} -s ${size} -n ${diskfuls[@]}  -sp ${storagepool}
-    #             ./vsdsadm stor resource create ${resource} -diskless -n ${disklesses[@]}
-    #             ;;
-    #         6) break ;;
-    #         *) echo "无效的选择，请重新输入" ;;
-    #     esac
-    # done
     echo "配置 LVM 和 LINSTOR 集群"
-
-    # 创建 VG
-    # echo "请输入 vg 名"
-    # read vgname
-    vgname="vgsds"  # 示例
-    echo "请输入设备列表（多个设备以空格隔开）:"
-    read -a devices
-
-    cd "${VSDS_PATH}/vsdsadm-v1.0.0"
-    # ./vsdsadm stor lvm create ${vgname} -t vg -d ${devices[@]}
-    command="./vsdsadm stor lvm create $vgname -t vg -d ${devices[@]}"
-    # echo "执行命令: $command"
-    eval $command
-    
-    # 创建节点和 IP
-    declare -a nodes_ips
-    nodenames=()
-
     while true; do
-        echo "请输入节点名和 IP 地址，用空格分隔 (输入 'done' 完成):"
-        read -a node_ip
-        if [[ "${node_ip[0]}" == "done" ]]; then
-            break
-        fi
-        nodes_ips+=("${node_ip[@]}")
+        echo "* * * * * * * * * * * * * * * * * * * * * * * * * * *"
+        echo "  提示：集群所有节点未配置好vg之前暂时不要进行pool和资源的操作"
+        echo "  创建pool和资源之前请先开启linstor-controller"
+        echo "  请选择要执行的操作(1~6):"
+        echo "  1: 集群节点配置"
+        echo "  2: 创建vg"
+        echo "  3: 创建thin pool（请先进行1/2配置）"
+        echo "  4: 创建thick pool（请先进行1/2配置）"
+        echo "  5: 创建资源（请先创建Storage Pool）"
+        echo "  6: 结束"
+        echo "* * * * * * * * * * * * * * * * * * * * * * * * * *"
+        read choice1
+        case $choice1 in
+        	1) 
+                echo "请输入节名和 ip"
+                read nodename ip
+                cd "${VSDS_PATH}/vsdsadm-v1.0.0"
+                ./vsdsadm stor node create ${nodename} -ip ${ip}
+                linstor controller sp DrbdOptions/AutoEvictAllowEviction false
+                ;;
+            2) 
+                echo "请输入 vg 名"
+                read vgname
+                echo "请输入 device（输入多个device请以“ ”隔开）"
+                read -a devices
+                cd "${VSDS_PATH}/vsdsadm-v1.0.0"
+                ./vsdsadm stor lvm create ${vgname} -t vg -d ${devices[@]}
+                ;;
+            3) 
+                echo "请输入节点名、thinpool 名和 vg 名"
+                read node thinpool vgname
+                cd "${VSDS_PATH}/vsdsadm-v1.0.0"
+                ./vsdsadm stor lvm create thlv -t thinpool -vg ${vgname}
+                ./vsdsadm stor storagepool create ${thinpool} -n ${node} -tlv ${vgname}/thlv
+                ;;
+            4) 
+                echo "请输入节点名、 thickpool 名和 vg 名"
+                read node thickpool vgname
+                cd "${VSDS_PATH}/vsdsadm-v1.0.0"
+                ./vsdsadm stor storagepool create ${thickpool} -n ${node} -lvm ${vgname}
+                ;;
+            5) 
+                echo "请输入资源名"
+                read resource
+                echo "请输入diskful节点名，节点名之间以“ ”隔开"
+                read -a diskfuls
+                echo "请输入diskless节点名，节点名之间以“ ”隔开"
+                read -a disklesses
+                echo "请输入资源的size"
+                read size
+                echo "请输入存储池名字"
+                read storagepool
+                cd "${VSDS_PATH}/vsdsadm-v1.0.0"
+                ./vsdsadm stor resource create ${resource} -s ${size} -n ${diskfuls[@]}  -sp ${storagepool}
+                ./vsdsadm stor resource create ${resource} -diskless -n ${disklesses[@]}
+                ;;
+            6) break ;;
+            *) echo "无效的选择，请重新输入" ;;
+        esac
     done
-
-    for ((i=0; i<${#nodes_ips[@]}; i+=2)); do
-        nodename="${nodes_ips[i]}"
-        ip="${nodes_ips[i+1]}"
-        # ./vsdsadm stor node create ${nodename} -ip ${ip}
-        command="./vsdsadm stor node create ${nodename} -ip ${ip}"
-        # echo "执行命令: $command"
-        eval $command
-        nodenames+=(${nodename})
-    done
-    linstor controller sp DrbdOptions/AutoEvictAllowEviction false
-    # echo ${nodenames[@]}
-    
-    # 创建 Thin Pool（固定值）
-    thinpool="thpool1"
-    command="./vsdsadm stor lvm create $thinpool -t thinpool -vg $vgname"
-    # echo "执行命令: $command"
-    eval $command
-    command="./vsdsadm stor storagepool create $thinpool -n ${nodenames[@]} -tlv ${vgname}/${thinpool}"
-    # echo "执行命令: $command"
-    eval $command
-
-    # 创建资源（固定值）
-    resource="linstordb"
-    diskfuls=("${nodenames[@]}")
-    # disklesses=()  # 空数组，因为没有 diskless 节点
-
-    size="512M"
-    storagepool="thpool1"  # 存储池名字固定为 thpool1
-
-    # ./vsdsadm stor resource create ${resource} -s ${size} -n ${diskfuls[@]}  -sp ${storagepool}
-    # ./vsdsadm stor resource create ${resource} -diskless -n ${disklesses[@]}
-    command="./vsdsadm stor resource create $resource -s $size -n ${diskfuls[@]} -sp $storagepool"
-    # echo "执行命令: $command"
-    eval $command
 else
     echo "vsdsadm不存在，无法执行程序"
 fi
