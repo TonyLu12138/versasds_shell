@@ -304,9 +304,7 @@ if [ -f "${vsdsadm_path}" ]; then
     command="./vsdsadm stor lvm create $thinpool -t thinpool -vg $vgname"
     # echo "执行命令: $command"
     eval $command
-    command="./vsdsadm stor storagepool create $thinpool -n ${nodenames[@]} -tlv ${vgname}/${thinpool}"
-    # echo "执行命令: $command"
-    eval $command
+
     
     # 创建节点和 IP
     declare -a nodes_ips
@@ -334,6 +332,10 @@ if [ -f "${vsdsadm_path}" ]; then
     linstor controller sp DrbdOptions/AutoEvictAllowEviction false
     # echo ${nodenames[@]}
     
+    # 创建存储池
+    command="./vsdsadm stor storagepool create $thinpool -n ${nodenames[@]} -tlv ${vgname}/${thinpool}"
+    # echo "执行命令: $command"
+    eval $command
 
     # 创建资源（固定值）
     resource="linstordb"
