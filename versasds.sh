@@ -17,32 +17,6 @@ case "$choice" in
         ;;
 esac
 
-#执行vsdsinstaller-k -i，安装 DRBD/LINSTOR
-echo "-------------------------------------------------------------------"
-installerk_path="${VSDS_PATH}/vsdsinstaller-k-v1.0.0/vsdsinstaller-k"
-
-if [ -f "${installerk_path}" ]; then
-    echo "安装DRBD/LINSTOR"
-    read -p "是否已填写配置文件 (y/n)，按其他键跳过 DRBD/LINSTOR 安装 " choice
-    case "$choice" in 
-        y|Y ) 
-            # 执行脚本
-            cd "${VSDS_PATH}/vsdsinstaller-k-v1.0.0"
-            ./vsdsinstaller-k -i
-            ;;
-        n|N ) 
-            echo "退出程序"
-            exit 0
-            ;;
-        * ) 
-            echo "退出DRBD/LINSTOR安装"
-            echo "程序继续执行"
-            ;;
-    esac
-else
-    echo "vsdsinstaller-k不存在，无法执行程序"
-fi
-
 # 执行vsdsipconf
 echo "-------------------------------------------------------------------"
 vsdsipconf_path="${VSDS_PATH}/vsdsipconf-v1.0.0/vsdsipconf"
@@ -69,6 +43,82 @@ if [ -f "${vsdsipconf_path}" ]; then
 else
     echo "vsdsipconf不存在，无法执行程序"
 fi
+
+
+# 执行iptool，配置ip
+echo "-------------------------------------------------------------------"
+iptool_path="${VSDS_PATH}/vsdsiptool-v1.0.0/vsdsiptool"
+
+if [ -f "${iptool_path}" ]; then
+    echo "ip配置，若已配置ip可跳过"
+    read -p "是否跳过ip配置 (y/n)，按其他键跳过 ip 配置 " choice
+    case "$choice" in 
+        y|Y ) 
+            echo "退出ip配置"
+            ;;
+        n|N ) 
+            while true; do
+                echo "* * * * * * * * * * * * * * * *"
+                echo "  请选择要执行的操作(1~3):"
+                echo "  1: 配置Bonding网络"
+                echo "  2: 配置普通网络"
+                echo "  3: 结束"
+                echo "* * * * * * * * * * * * * * * *"
+                read choice1
+                case $choice1 in
+                    1) 
+                        echo "请输入 bonding网卡名、ip、网络接口1（子网卡1）、网络接口2（子网卡2） 和 bonding模式"
+                        read bond_name ip device1 device2 mode
+                        cd "${VSDS_PATH}/vsdsiptool-v1.0.0"
+                        ./vsdsiptool bonding create ${bond_name} -ip ${ip} -d ${device1} ${device2} -m ${mode}
+                        ;;
+                    2) 
+                        echo "请输入 ip 和 网络接口（网卡）"
+                        read ip device
+                        cd "${VSDS_PATH}/vsdsiptool-v1.0.0"
+                        ./vsdsiptool ip create -ip ${ip} -d ${device}
+                        ;;
+                    3) break ;;
+                    *) echo "无效的选择，请重新输入" ;;
+                esac
+            done 
+            ;;
+        * )
+            echo "退出ip配置"
+            echo "程序继续执行"
+            ;;
+    esac
+else
+    echo "vsdsiptool不存在，无法执行程序"
+fi
+
+
+#执行vsdsinstaller-k -i，安装 DRBD/LINSTOR
+echo "-------------------------------------------------------------------"
+installerk_path="${VSDS_PATH}/vsdsinstaller-k-v1.0.0/vsdsinstaller-k"
+
+if [ -f "${installerk_path}" ]; then
+    echo "安装DRBD/LINSTOR"
+    read -p "是否已填写配置文件 (y/n)，按其他键跳过 DRBD/LINSTOR 安装 " choice
+    case "$choice" in 
+        y|Y ) 
+            # 执行脚本
+            cd "${VSDS_PATH}/vsdsinstaller-k-v1.0.0"
+            ./vsdsinstaller-k -i
+            ;;
+        n|N ) 
+            echo "退出程序"
+            exit 0
+            ;;
+        * ) 
+            echo "退出DRBD/LINSTOR安装"
+            echo "程序继续执行"
+            ;;
+    esac
+else
+    echo "vsdsinstaller-k不存在，无法执行程序"
+fi
+
 
 # 执行vsdsinstaller-u，安装 VersaSDS - Pacemaker/Corosync/crmsh  + targetcli
 echo "-------------------------------------------------------------------"
@@ -120,7 +170,7 @@ echo "-------------------------------------------------------------------"
 preset_path="${VSDS_PATH}/vsdspreset-v1.0.0/vsdspreset"
 
 if [ -f "${preset_path}" ]; then
-    echo "VersaSDS预配置，若已配置网络可跳过网络配置"
+    echo "VersaSDS预配置"
     read -p "是否跳过网络配置 (y/n)，按其他键跳过 VersaSDS 预配置 " choice
     case "$choice" in 
         y|Y ) 
@@ -141,52 +191,7 @@ else
     echo "vsdspreset不存在，无法执行程序"
 fi
 
-# 执行iptool，配置ip
-echo "-------------------------------------------------------------------"
-iptool_path="${VSDS_PATH}/vsdsiptool-v1.0.0/vsdsiptool"
 
-if [ -f "${iptool_path}" ]; then
-    echo "ip配置，若已配置ip可跳过"
-    read -p "是否跳过ip配置 (y/n)，按其他键跳过 ip 配置 " choice
-    case "$choice" in 
-        y|Y ) 
-            echo "退出ip配置"
-            ;;
-        n|N ) 
-            while true; do
-                echo "* * * * * * * * * * * * * * * *"
-                echo "  请选择要执行的操作(1~3):"
-                echo "  1: 配置Bonding网络"
-                echo "  2: 配置普通网络"
-                echo "  3: 结束"
-                echo "* * * * * * * * * * * * * * * *"
-                read choice1
-                case $choice1 in
-                    1) 
-                        echo "请输入 bonding网卡名、ip、网络接口1（子网卡1）、网络接口2（子网卡2） 和 bonding模式"
-                        read bond_name ip device1 device2 mode
-                        cd "${VSDS_PATH}/vsdsiptool-v1.0.0"
-                        ./vsdsiptool bonding create ${bond_name} -ip ${ip} -d ${device1} ${device2} -m ${mode}
-                        ;;
-                    2) 
-                        echo "请输入 ip 和 网络接口（网卡）"
-                        read ip device
-                        cd "${VSDS_PATH}/vsdsiptool-v1.0.0"
-                        ./vsdsiptool ip create -ip ${ip} -d ${device}
-                        ;;
-                    3) break ;;
-                    *) echo "无效的选择，请重新输入" ;;
-                esac
-            done 
-            ;;
-        * )
-            echo "退出ip配置"
-            echo "程序继续执行"
-            ;;
-    esac
-else
-    echo "vsdsiptool不存在，无法执行程序"
-fi
 
 #是否开启linstor-controller
 echo "-------------------------------------------------------------------"
@@ -207,6 +212,9 @@ case "$choice" in
         echo "程序继续执行"
         ;;
 esac
+
+#开启linstor-satellite
+systemctl start linstor-satellite
 
 # 执行vsdsadm，配置 LVM 和 LINSTOR 集群
 echo "-------------------------------------------------------------------"
@@ -290,6 +298,15 @@ if [ -f "${vsdsadm_path}" ]; then
     command="./vsdsadm stor lvm create $vgname -t vg -d ${devices[@]}"
     # echo "执行命令: $command"
     eval $command
+
+    # 创建 Thin Pool（固定值）
+    thinpool="thpool1"
+    command="./vsdsadm stor lvm create $thinpool -t thinpool -vg $vgname"
+    # echo "执行命令: $command"
+    eval $command
+    command="./vsdsadm stor storagepool create $thinpool -n ${nodenames[@]} -tlv ${vgname}/${thinpool}"
+    # echo "执行命令: $command"
+    eval $command
     
     # 创建节点和 IP
     declare -a nodes_ips
@@ -313,17 +330,10 @@ if [ -f "${vsdsadm_path}" ]; then
         eval $command
         nodenames+=(${nodename})
     done
+
     linstor controller sp DrbdOptions/AutoEvictAllowEviction false
     # echo ${nodenames[@]}
     
-    # 创建 Thin Pool（固定值）
-    thinpool="thpool1"
-    command="./vsdsadm stor lvm create $thinpool -t thinpool -vg $vgname"
-    # echo "执行命令: $command"
-    eval $command
-    command="./vsdsadm stor storagepool create $thinpool -n ${nodenames[@]} -tlv ${vgname}/${thinpool}"
-    # echo "执行命令: $command"
-    eval $command
 
     # 创建资源（固定值）
     resource="linstordb"
