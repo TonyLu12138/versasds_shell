@@ -22,8 +22,8 @@ echo "-------------------------------------------------------------------"
 vsdsipconf_path="${VSDS_PATH}/vsdsipconf-v1.0.0/vsdsipconf"
 
 if [ -f "${vsdsipconf_path}" ]; then
-    echo "安装网络配置工具"
-    read -p "是否已填写配置文件 (y/n)" choice
+    echo "安装网络配置工具，若已安装可跳过"
+    read -p "是否已填写配置文件 (y/n)，按其他键跳过安装网络配置" choice
     case "$choice" in 
         y|Y ) 
             # 执行脚本
@@ -50,11 +50,11 @@ echo "-------------------------------------------------------------------"
 iptool_path="${VSDS_PATH}/vsdsiptool-v1.0.0/vsdsiptool"
 
 if [ -f "${iptool_path}" ]; then
-    echo "ip配置，若已配置ip可跳过"
-    read -p "是否跳过ip配置 (y/n)，按其他键跳过 ip 配置 " choice
+    echo "ip配置，若已配置 ip 可跳过"
+    read -p "是否跳过 ip 配置 (y/n)，按其他键跳过 ip 配置 " choice
     case "$choice" in 
         y|Y ) 
-            echo "退出ip配置"
+            echo "退出 ip 配置"
             ;;
         n|N ) 
             while true; do
@@ -67,7 +67,7 @@ if [ -f "${iptool_path}" ]; then
                 read choice1
                 case $choice1 in
                     1) 
-                        echo "请输入 bonding网卡名、ip、网络接口1（子网卡1）、网络接口2（子网卡2） 和 bonding模式"
+                        echo "请输入 bonding 网卡名、ip、网络接口1（子网卡1）、网络接口2（子网卡2） 和 bonding 模式"
                         read bond_name ip device1 device2 mode
                         cd "${VSDS_PATH}/vsdsiptool-v1.0.0"
                         ./vsdsiptool bonding create ${bond_name} -ip ${ip} -d ${device1} ${device2} -m ${mode}
@@ -84,7 +84,7 @@ if [ -f "${iptool_path}" ]; then
             done 
             ;;
         * )
-            echo "退出ip配置"
+            echo "退出 ip 配置"
             echo "程序继续执行"
             ;;
     esac
@@ -98,7 +98,7 @@ echo "-------------------------------------------------------------------"
 installerk_path="${VSDS_PATH}/vsdsinstaller-k-v1.0.1/vsdsinstaller-k"
 
 if [ -f "${installerk_path}" ]; then
-    echo "安装DRBD/LINSTOR"
+    echo "安装DRBD/LINSTOR，若已安装可跳过"
     read -p "是否已填写配置文件 (y/n)，按其他键跳过 DRBD/LINSTOR 安装 " choice
     case "$choice" in 
         y|Y ) 
@@ -126,8 +126,8 @@ installeru_path="${VSDS_PATH}/vsdsinstaller-u-v1.0.1/vsdsinstaller-u"
 
 if [ -f "${installeru_path}" ]; then
     # echo "安装高可用软件和网络配置工具"
-    echo "安装高可用软件"
-    read -p "是否已填写配置文件 (y/n)，按其他键跳过 VersaSDS 安装 " choice
+    echo "安装高可用软件，若已安装可跳过"
+    read -p "是否已填写配置文件 (y/n)，按其他键跳过高可用软件安装 " choice
     case "$choice" in 
         y|Y ) 
             # 执行脚本
@@ -157,7 +157,7 @@ if [ -f "${installeru_path}" ]; then
             exit 0
             ;;
         * ) 
-            echo "退出高可用软件和网络配置工具安装"
+            echo "退出高可用软件安装"
             echo "程序继续执行"
             ;;
     esac
@@ -170,7 +170,7 @@ echo "-------------------------------------------------------------------"
 preset_path="${VSDS_PATH}/vsdspreset-v1.0.1/vsdspreset"
 
 if [ -f "${preset_path}" ]; then
-    echo "VersaSDS预配置"
+    echo "VersaSDS 预配置，若已配置可跳过"
     read -p "是否跳过网络配置 (y/n)，按其他键跳过 VersaSDS 预配置 " choice
     case "$choice" in 
         y|Y ) 
@@ -183,7 +183,7 @@ if [ -f "${preset_path}" ]; then
             ./vsdspreset
             ;;
         * ) 
-            echo "退出VersaSDS预配置"
+            echo "退出 VersaSDS 预配置"
             echo "程序继续执行"
             ;;
     esac
@@ -359,7 +359,7 @@ echo "-------------------------------------------------------------------"
 coroconf_path="${VSDS_PATH}/vsdscoroconf-v1.0.1/vsdscoroconf"
 
 if [ -f "${coroconf_path}" ]; then
-    echo "配置 Corosync"
+    echo "配置 Corosync，如已配置可以跳过"
     read -p "是否已填写配置文件 (y/n)，按其他键跳过 Corosync 配置 " choice
     case "$choice" in 
         y|Y ) 
@@ -386,7 +386,7 @@ echo "-------------------------------------------------------------------"
 ha_path="${VSDS_PATH}/vsdshaconf-v1.0.1/vsdshaconf"
 
 if [ -f "${ha_path}" ]; then
-    echo "配置高可用"
+    echo "配置高可用，如已配置可以跳过"
     read -p "是否已填写配置文件 (y/n)，按其他键跳过高可用配置 " choice
     case "$choice" in 
         y|Y ) 
@@ -415,6 +415,7 @@ fi
 
 #配置linstor-client
 echo "-------------------------------------------------------------------"
+echo "配置 linstor-client，如已配置可以跳过"
 read -p "是否已配置好 linstor-controller 的高可用 (y/n)，按其他键跳过 linstor-client 配置 " choice
 case "$choice" in 
     y|Y ) 
