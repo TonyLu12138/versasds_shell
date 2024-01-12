@@ -41,7 +41,7 @@ if [ -f "${vsdsipconf_path}" ]; then
             ;;
     esac
 else
-    echo "vsdsipconf不存在，无法执行程序"
+    echo "vsdsipconf 不存在，无法执行程序"
 fi
 
 
@@ -89,13 +89,13 @@ if [ -f "${iptool_path}" ]; then
             ;;
     esac
 else
-    echo "vsdsiptool不存在，无法执行程序"
+    echo "vsdsiptool 不存在，无法执行程序"
 fi
 
 
 #执行vsdsinstaller-k -i，安装 DRBD/LINSTOR
 echo "-------------------------------------------------------------------"
-installerk_path="${VSDS_PATH}/vsdsinstaller-k-v1.0.0/vsdsinstaller-k"
+installerk_path="${VSDS_PATH}/vsdsinstaller-k-v1.0.1/vsdsinstaller-k"
 
 if [ -f "${installerk_path}" ]; then
     echo "安装DRBD/LINSTOR"
@@ -103,7 +103,7 @@ if [ -f "${installerk_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdsinstaller-k-v1.0.0"
+            cd "${VSDS_PATH}/vsdsinstaller-k-v1.0.1"
             ./vsdsinstaller-k -i
             ;;
         n|N ) 
@@ -116,13 +116,13 @@ if [ -f "${installerk_path}" ]; then
             ;;
     esac
 else
-    echo "vsdsinstaller-k不存在，无法执行程序"
+    echo "vsdsinstaller-k 不存在，无法执行程序"
 fi
 
 
 # 执行vsdsinstaller-u，安装 VersaSDS - Pacemaker/Corosync/crmsh  + targetcli
 echo "-------------------------------------------------------------------"
-installeru_path="${VSDS_PATH}/vsdsinstaller-u-v1.0.0/vsdsinstaller-u"
+installeru_path="${VSDS_PATH}/vsdsinstaller-u-v1.0.1/vsdsinstaller-u"
 
 if [ -f "${installeru_path}" ]; then
     # echo "安装高可用软件和网络配置工具"
@@ -131,25 +131,25 @@ if [ -f "${installeru_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdsinstaller-u-v1.0.0"
+            cd "${VSDS_PATH}/vsdsinstaller-u-v1.0.1"
             ./vsdsinstaller-u
             cp /usr/lib/ocf/resource.d/heartbeat/portblock /usr/lib/ocf/resource.d/heartbeat/portblock.bak
-            cp "${VSDS_PATH}/portblock" /usr/lib/ocf/resource.d/heartbeat/
-            chmod 755 /usr/lib/ocf/resource.d/heartbeat/portblock
-            if grep -i "portblock.mod_iptablesversion" /usr/lib/ocf/resource.d/heartbeat/portblock; then
-                echo "portblock RA替换成功"
-            else
-                echo "portblock RA替换失败"
-            fi
+            # cp "${VSDS_PATH}/portblock" /usr/lib/ocf/resource.d/heartbeat/
+            # chmod 755 /usr/lib/ocf/resource.d/heartbeat/portblock
+            # if grep -i "portblock.mod_iptablesversion" /usr/lib/ocf/resource.d/heartbeat/portblock; then
+            #     echo "portblock RA替换成功"
+            # else
+            #     echo "portblock RA替换失败"
+            # fi
 
             cp /usr/lib/ocf/resource.d/linbit/drbd /usr/lib/ocf/resource.d/linbit/drbd.bak
-            cp "${VSDS_PATH}/drbd" /usr/lib/ocf/resource.d/linbit/
-            chmod 755 /usr/lib/ocf/resource.d/linbit/drbd
-            if grep -i "drbd.mod_notconfiged_retryonce" /usr/lib/ocf/resource.d/linbit/drbd; then
-                echo "drbd RA 替换成功"
-            else
-                echo "drbd RA 替换失败"
-            fi
+            # cp "${VSDS_PATH}/drbd" /usr/lib/ocf/resource.d/linbit/
+            # chmod 755 /usr/lib/ocf/resource.d/linbit/drbd
+            # if grep -i "drbd.mod_notconfiged_retryonce" /usr/lib/ocf/resource.d/linbit/drbd; then
+            #     echo "drbd RA 替换成功"
+            # else
+            #     echo "drbd RA 替换失败"
+            # fi
             ;;
         n|N ) 
             echo "请先填写配置文件"
@@ -162,12 +162,12 @@ if [ -f "${installeru_path}" ]; then
             ;;
     esac
 else
-    echo "vsdsinstaller-u不存在，无法执行程序"
+    echo "vsdsinstaller-u 不存在，无法执行程序"
 fi
 
 # 执行vsdspreset，VersaSDS 预配置
 echo "-------------------------------------------------------------------"
-preset_path="${VSDS_PATH}/vsdspreset-v1.0.0/vsdspreset"
+preset_path="${VSDS_PATH}/vsdspreset-v1.0.1/vsdspreset"
 
 if [ -f "${preset_path}" ]; then
     echo "VersaSDS预配置"
@@ -175,11 +175,11 @@ if [ -f "${preset_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdspreset-v1.0.0"
+            cd "${VSDS_PATH}/vsdspreset-v1.0.1"
             ./vsdspreset --skip
             ;;
         n|N ) 
-            cd "${VSDS_PATH}/vsdspreset-v1.0.0"
+            cd "${VSDS_PATH}/vsdspreset-v1.0.1"
             ./vsdspreset
             ;;
         * ) 
@@ -188,27 +188,27 @@ if [ -f "${preset_path}" ]; then
             ;;
     esac
 else
-    echo "vsdspreset不存在，无法执行程序"
+    echo "vsdspreset 不存在，无法执行程序"
 fi
 
 
 
 #是否开启linstor-controller
 echo "-------------------------------------------------------------------"
-echo "如果集群每个节点的 vg 都配置完毕，请选择一个节点开启linstor-controller开始进行集群配置"
-echo "如果集群的每个节点并未配置好 vg，请暂时不要开启linstor-controller"
-read -p "是否开启linstor-controller (y/n)，按其他键跳过开启linstor-controller " choice
+echo "如果集群每个节点的 vg 都配置完毕，请选择一个节点开启 linstor-controller 并开始进行集群配置"
+echo "如果集群的每个节点并未配置好 vg，请暂时不要开启 linstor-controller"
+read -p "是否开启linstor-controller (y/n)，按其他键跳过开启 linstor-controller " choice
 case "$choice" in 
     y|Y ) 
         # 执行脚本
         systemctl start linstor-controller
         ;;
     n|N ) 
-        echo "跳过开启linstor-controller"
+        echo "跳过开启 linstor-controller"
         echo "程序继续执行"
         ;;
     * ) 
-        echo "跳过开启linstor-controller"
+        echo "跳过开启 linstor-controller"
         echo "程序继续执行"
         ;;
 esac
@@ -218,7 +218,7 @@ systemctl start linstor-satellite
 
 # 执行vsdsadm，配置 LVM 和 LINSTOR 集群
 echo "-------------------------------------------------------------------"
-vsdsadm_path="${VSDS_PATH}/vsdsadm-v1.0.0/vsdsadm"
+vsdsadm_path="${VSDS_PATH}/vsdsadm-v1.0.1/vsdsadm"
 
 if [ -f "${vsdsadm_path}" ]; then
     # echo "配置 LVM 和 LINSTOR 集群"
@@ -293,7 +293,7 @@ if [ -f "${vsdsadm_path}" ]; then
     echo "请输入设备列表（多个设备以空格隔开）:"
     read -a devices
 
-    cd "${VSDS_PATH}/vsdsadm-v1.0.0"
+    cd "${VSDS_PATH}/vsdsadm-v1.0.1"
     # ./vsdsadm stor lvm create ${vgname} -t vg -d ${devices[@]}
     command="./vsdsadm stor lvm create $vgname -t vg -d ${devices[@]}"
     # echo "执行命令: $command"
@@ -351,20 +351,20 @@ if [ -f "${vsdsadm_path}" ]; then
     # echo "执行命令: $command"
     eval $command
 else
-    echo "vsdsadm不存在，无法执行程序"
+    echo "vsdsadm 不存在，无法执行程序"
 fi
 
 # 执行vsdscoroconf，配置 Corosync
 echo "-------------------------------------------------------------------"
-coroconf_path="${VSDS_PATH}/vsdscoroconf-v1.0.0/vsdscoroconf"
+coroconf_path="${VSDS_PATH}/vsdscoroconf-v1.0.1/vsdscoroconf"
 
 if [ -f "${coroconf_path}" ]; then
-    echo "配置Corosync"
+    echo "配置 Corosync"
     read -p "是否已填写配置文件 (y/n)，按其他键跳过 Corosync 配置 " choice
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdscoroconf-v1.0.0"
+            cd "${VSDS_PATH}/vsdscoroconf-v1.0.1"
             cp corosync.conf.bak /etc/corosync/corosync.conf
             ./vsdscoroconf
             ;;
@@ -373,17 +373,17 @@ if [ -f "${coroconf_path}" ]; then
             exit 0
             ;;
         * ) 
-            echo "跳过Corosync配置"
+            echo "跳过 Corosync 配置"
             echo "程序继续执行"
             ;;
     esac
 else
-    echo "vsdscoroconf不存在，无法执行程序"
+    echo "vsdscoroconf 不存在，无法执行程序"
 fi
 
 # 执行vsdshaconf，配置高可用
 echo "-------------------------------------------------------------------"
-ha_path="${VSDS_PATH}/vsdshaconf-v1.0.0/vsdshaconf"
+ha_path="${VSDS_PATH}/vsdshaconf-v1.0.1/vsdshaconf"
 
 if [ -f "${ha_path}" ]; then
     echo "配置高可用"
@@ -391,7 +391,7 @@ if [ -f "${ha_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdshaconf-v1.0.0"
+            cd "${VSDS_PATH}/vsdshaconf-v1.0.1"
             ./vsdshaconf build -p
             ./vsdshaconf build -l
             crm res cleanup p_drbd_linstordb
@@ -410,12 +410,12 @@ if [ -f "${ha_path}" ]; then
             ;;
     esac
 else
-    echo "vsdshaconf不存在，无法执行程序"
+    echo "vsdshaconf 不存在，无法执行程序"
 fi
 
 #配置linstor-client
 echo "-------------------------------------------------------------------"
-read -p "是否已配置好linstor-controller的高可用 (y/n)，按其他键跳过linstor-client配置 " choice
+read -p "是否已配置好 linstor-controller 的高可用 (y/n)，按其他键跳过 linstor-client 配置 " choice
 case "$choice" in 
     y|Y ) 
         # 执行脚本
@@ -428,7 +428,7 @@ case "$choice" in
         exit 0
         ;;
     * ) 
-        echo "跳过linstor-client配置"
+        echo "跳过 linstor-client 配置"
         echo "程序继续执行"
         ;;
 esac
@@ -451,17 +451,17 @@ if [ -f "${csmpreinstaller_path}" ]; then
             exit 0
             ;;
         * ) 
-            echo "跳过安装docker & kubeadm 等软件"
+            echo "跳过安装 docker & kubeadm 等软件"
             echo "程序继续执行"
             ;;
     esac
 else
-    echo "csmpreinstaller不存在，无法执行程序"
+    echo "csmpreinstaller 不存在，无法执行程序"
 fi
 
 # 执行csmdeployer，部署 CoSAN Manager
 echo "-------------------------------------------------------------------"
-csmdeployer_path="${VSDS_PATH}/csmdeployer-v1.0.0/csmdeployer"
+csmdeployer_path="${VSDS_PATH}/csmdeployer-v1.0.1/csmdeployer"
 
 if [ -f "${csmdeployer_path}" ]; then
     echo "部署 CoSAN Manager"
@@ -469,7 +469,7 @@ if [ -f "${csmdeployer_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/csmdeployer-v1.0.0"
+            cd "${VSDS_PATH}/csmdeployer-v1.0.1"
             ./csmdeployer
             ;;
         n|N ) 
@@ -482,5 +482,5 @@ if [ -f "${csmdeployer_path}" ]; then
             ;;
     esac
 else
-    echo "csmdeployer不存在，无法执行程序"
+    echo "csmdeployer 不存在，无法执行程序"
 fi
