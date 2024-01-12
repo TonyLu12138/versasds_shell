@@ -171,16 +171,16 @@ preset_path="${VSDS_PATH}/vsdspreset-v1.0.1/vsdspreset"
 
 if [ -f "${preset_path}" ]; then
     echo "VersaSDS 预配置，若已配置可跳过"
-    read -p "是否跳过网络配置 (y/n)，按其他键跳过 VersaSDS 预配置 " choice
+    read -p "是否进行 VersaSDS 预配置 (y/n)，按其他键跳过 VersaSDS 预配置 " choice
     case "$choice" in 
         y|Y ) 
             # 执行脚本
             cd "${VSDS_PATH}/vsdspreset-v1.0.1"
-            ./vsdspreset --skip
+            ./vsdspreset
             ;;
         n|N ) 
-            cd "${VSDS_PATH}/vsdspreset-v1.0.1"
-            ./vsdspreset
+            echo "退出程序"
+            exit 0
             ;;
         * ) 
             echo "退出 VersaSDS 预配置"
