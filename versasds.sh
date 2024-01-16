@@ -394,10 +394,12 @@ if [ -f "${ha_path}" ]; then
             cd "${VSDS_PATH}/vsdshaconf-v1.0.1"
             ./vsdshaconf build -p
             ./vsdshaconf build -l
+            ./vsdshaconf build -v
             crm res cleanup p_drbd_linstordb
-            ./vsdshaconf build -t
-            ./vsdshaconf build -d
-            ./vsdshaconf build -i
+            sleep 5
+            # ./vsdshaconf build -t
+            # ./vsdshaconf build -d
+            # ./vsdshaconf build -i
             crm res ref
             ;;
         n|N ) 
