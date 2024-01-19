@@ -23,7 +23,7 @@ vsdsipconf_path="${VSDS_PATH}/vsdsipconf-v1.0.0/vsdsipconf"
 
 if [ -f "${vsdsipconf_path}" ]; then
     echo "安装网络配置工具，若已安装可跳过"
-    read -p "是否已填写配置文件 (y/n)，按其他键跳过安装网络配置" choice
+    read -p "是否已填写配置文件 (y/n)，按其他键跳过安装网络配置 " choice
     case "$choice" in 
         y|Y ) 
             # 执行脚本
@@ -283,7 +283,8 @@ if [ -f "${vsdsadm_path}" ]; then
     #         *) echo "无效的选择，请重新输入" ;;
     #     esac
     # done
-    read -p "是否配置 LVM 和 LINSTOR 集群 (y/Y)，按其他键跳过配置 LVM 和 LINSTOR 集群" choice
+    echo "配置 LVM 和 LINSTOR 集群，如已配置可以跳过"
+    read -p "是否配置 LVM 和 LINSTOR 集群 (y/Y)，按其他键跳过配置 LVM 和 LINSTOR 集群 " choice
     case "$choice" in 
         y|Y ) 
             # 创建 VG
@@ -319,37 +320,41 @@ if [ -f "${vsdsadm_path}" ]; then
                 nodes_ips+=("${node_ip[@]}")
             done
 
-            for ((i=0; i<${#nodes_ips[@]}; i+=2)); do
-                nodename="${nodes_ips[i]}"
-                ip="${nodes_ips[i+1]}"
-                # ./vsdsadm stor node create ${nodename} -ip ${ip}
-                command="./vsdsadm stor node create ${nodename} -ip ${ip}"
+            if [ ${#nodes_ips[@]} -eq 0 ]; then
+                echo "跳过配置 LINSTOR 集群"
+            else
+                for ((i=0; i<${#nodes_ips[@]}; i+=2)); do
+                    nodename="${nodes_ips[i]}"
+                    ip="${nodes_ips[i+1]}"
+                    # ./vsdsadm stor node create ${nodename} -ip ${ip}
+                    command="./vsdsadm stor node create ${nodename} -ip ${ip}"
+                    # echo "执行命令: $command"
+                    eval $command
+                    nodenames+=(${nodename})
+                done
+
+                linstor controller sp DrbdOptions/AutoEvictAllowEviction false
+                # echo ${nodenames[@]}
+                
+                # 创建存储池
+                command="./vsdsadm stor storagepool create $thinpool -n ${nodenames[@]} -tlv ${vgname}/${thinpool}"
                 # echo "执行命令: $command"
                 eval $command
-                nodenames+=(${nodename})
-            done
 
-            linstor controller sp DrbdOptions/AutoEvictAllowEviction false
-            # echo ${nodenames[@]}
-            
-            # 创建存储池
-            command="./vsdsadm stor storagepool create $thinpool -n ${nodenames[@]} -tlv ${vgname}/${thinpool}"
-            # echo "执行命令: $command"
-            eval $command
+                # 创建资源（固定值）
+                resource="linstordb"
+                diskfuls=("${nodenames[@]}")
+                # disklesses=()  # 空数组，因为没有 diskless 节点
 
-            # 创建资源（固定值）
-            resource="linstordb"
-            diskfuls=("${nodenames[@]}")
-            # disklesses=()  # 空数组，因为没有 diskless 节点
+                size="512M"
+                storagepool="thpool1"  # 存储池名字固定为 thpool1
 
-            size="512M"
-            storagepool="thpool1"  # 存储池名字固定为 thpool1
-
-            # ./vsdsadm stor resource create ${resource} -s ${size} -n ${diskfuls[@]}  -sp ${storagepool}
-            # ./vsdsadm stor resource create ${resource} -diskless -n ${disklesses[@]}
-            command="./vsdsadm stor resource create $resource -s $size -n ${diskfuls[@]} -sp $storagepool"
-            # echo "执行命令: $command"
-            eval $command
+                # ./vsdsadm stor resource create ${resource} -s ${size} -n ${diskfuls[@]}  -sp ${storagepool}
+                # ./vsdsadm stor resource create ${resource} -diskless -n ${disklesses[@]}
+                command="./vsdsadm stor resource create $resource -s $size -n ${diskfuls[@]} -sp $storagepool"
+                # echo "执行命令: $command"
+                eval $command
+            fi
             ;;
         * ) 
             echo "跳过配置 LVM 和 LINSTOR 集群"
@@ -400,7 +405,7 @@ if [ -f "${ha_path}" ]; then
             cd "${VSDS_PATH}/vsdshaconf-v1.0.1"
             ./vsdshaconf build -p
             ./vsdshaconf build -l
-            ./vsdshaconf build -v
+            # ./vsdshaconf build -v
             crm res cleanup p_drbd_linstordb
             sleep 5
             # ./vsdshaconf build -t
