@@ -412,6 +412,9 @@ if [ -f "${ha_path}" ]; then
             # ./vsdshaconf build -d
             # ./vsdshaconf build -i
             crm res ref
+            sleep 8
+            crm res ref
+            sleep 8
             ;;
         n|N ) 
             echo "退出程序"
