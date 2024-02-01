@@ -412,6 +412,11 @@ if [ -f "${ha_path}" ]; then
             # ./vsdshaconf build -d
             # ./vsdshaconf build -i
             crm res ref
+            sleep 15
+            crm res ref
+            sleep 15
+            crm res ref
+            sleep 15
             ;;
         n|N ) 
             echo "退出程序"
@@ -475,7 +480,7 @@ fi
 
 # 执行csmdeployer，部署 CoSAN Manager
 echo "-------------------------------------------------------------------"
-csmdeployer_path="${VSDS_PATH}/csmdeployer-v1.0.1/csmdeployer"
+csmdeployer_path="${VSDS_PATH}/csmdeployer-v1.0.2/csmdeployer"
 
 if [ -f "${csmdeployer_path}" ]; then
     echo "部署 CoSAN Manager"
@@ -483,7 +488,7 @@ if [ -f "${csmdeployer_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/csmdeployer-v1.0.1"
+            cd "${VSDS_PATH}/csmdeployer-v1.0.2"
             ./csmdeployer
             ;;
         n|N ) 
