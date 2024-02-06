@@ -97,7 +97,7 @@ echo "-------------------------------------------------------------------"
 sshfree_path="${VSDS_PATH}/vsdssshfree-v1.0.0/vsdssshfree"
 
 if [ -f "${sshfree_path}" ]; then
-    echo "执行 vsdssshfree 工具"
+    echo "进行 ssh 免密配置，如已配置可跳过"
 
     read -p "是否已填写配置文件 (y/n)，按其他键跳过 ssh 免密配置 " ssh_configured
     case "$ssh_configured" in 
