@@ -92,6 +92,51 @@ else
     echo "vsdsiptool 不存在，无法执行程序"
 fi
 
+# 执行vsdssshfree
+echo "-------------------------------------------------------------------"
+sshfree_path="${VSDS_PATH}/vsdssshfree-v1.0.0/vsdssshfree"
+
+if [ -f "${sshfree_path}" ]; then
+    echo "执行 vsdssshfree 工具"
+
+    read -p "是否已填写配置文件 (y/n)，按其他键跳过 ssh 免密配置 " ssh_configured
+    case "$ssh_configured" in 
+        y|Y ) 
+            cd "${VSDS_PATH}/vsdssshfree-v1.0.0"
+            
+            # 执行 modify
+            ./vsdssshfree m
+            if [ $? -ne 0 ]; then
+                echo "Error: 执行 ./vsdssshfree m 失败"
+                exit 1
+            fi
+            
+            # 执行 fe
+            ./vsdssshfree fe
+            if [ $? -ne 0 ]; then
+                echo "Error: 执行 ./vsdssshfree fe 失败"
+                exit 1
+            fi
+            
+            # 执行 check
+            ./vsdssshfree c
+            if [ $? -ne 0 ]; then
+                echo "Error: 执行 ./vsdssshfree c 失败"
+                exit 1
+            fi
+            ;;
+        n|N ) 
+            echo "中断脚本，未填写配置文件"
+            exit 1
+            ;;
+        * )
+            echo "跳过 ssh 免密配置"
+            ;;
+    esac
+
+else
+    echo "vsdssshfree 工具不存在，无法执行"
+fi
 
 #执行vsdsinstaller-k -i，安装 DRBD/LINSTOR
 echo "-------------------------------------------------------------------"
