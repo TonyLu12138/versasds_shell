@@ -102,8 +102,6 @@ if [ -f "${sshfree_path}" ]; then
     read -p "是否已填写配置文件 (y/n)，按其他键跳过 ssh 免密配置 " ssh_configured
     case "$ssh_configured" in 
         y|Y ) 
-            echo "执行 SSHfree 工具"
-            
             cd "${VSDS_PATH}/vsdssshfree-v1.0.0"
             
             # 执行 modify
