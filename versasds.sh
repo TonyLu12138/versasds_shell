@@ -329,7 +329,7 @@ if [ -f "${vsdsadm_path}" ]; then
     #     esac
     # done
     echo "配置 LVM 和 LINSTOR 集群，如已配置可以跳过"
-    read -p "是否配置 LVM 和 LINSTOR 集群 (y/Y)，按其他键跳过配置 LVM 和 LINSTOR 集群 " choice
+    read -p "是否配置 LVM 和 LINSTOR 集群 (y/n)，按其他键跳过配置 LVM 和 LINSTOR 集群 " choice
     case "$choice" in 
         y|Y ) 
             # 创建 VG
@@ -400,6 +400,10 @@ if [ -f "${vsdsadm_path}" ]; then
                 # echo "执行命令: $command"
                 eval $command
             fi
+            ;;
+        n|N ) 
+            echo "退出程序"
+            exit 0
             ;;
         * ) 
             echo "跳过配置 LVM 和 LINSTOR 集群"
@@ -542,7 +546,6 @@ if [ -f "${csmdeployer_path}" ]; then
             ;;
         * ) 
             echo "跳过部署部署 CoSAN Manager"
-            echo "程序继续执行"
             ;;
     esac
 else
