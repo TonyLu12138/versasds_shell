@@ -291,7 +291,8 @@ if [ -f "${vsdsadm_path}" ]; then
             # echo "请输入 vg 名"
             # read vgname
             vgname="vgsds"  # 示例
-            echo "请输入设备列表（多个设备以空格隔开）:"
+            echo "请务必根据各个节点的 hostname 和实际 IP 进行填写，否则将影响后续配置"
+            echo "请输入设备列表（多个设备以空格隔开）: "
             read -a devices
 
             cd "${VSDS_PATH}/vsdsadm-v1.0.1"
