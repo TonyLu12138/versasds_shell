@@ -19,7 +19,7 @@ esac
 
 # 执行vsdsipconf
 echo "-------------------------------------------------------------------"
-vsdsipconf_path="${VSDS_PATH}/vsdsipconf-v1.0.0/vsdsipconf"
+vsdsipconf_path="${VSDS_PATH}/vsdsipconf-v1.0.1/vsdsipconf"
 
 if [ -f "${vsdsipconf_path}" ]; then
     echo "安装网络配置工具，若已安装可跳过"
@@ -27,7 +27,7 @@ if [ -f "${vsdsipconf_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdsipconf-v1.0.0"
+            cd "${VSDS_PATH}/vsdsipconf-v1.0.1"
             ./vsdsipconf
             ;;
         n|N ) 
@@ -92,10 +92,57 @@ else
     echo "vsdsiptool 不存在，无法执行程序"
 fi
 
+# 执行vsdssshfree
+echo "-------------------------------------------------------------------"
+sshfree_path="${VSDS_PATH}/vsdssshfree-v1.0.0/vsdssshfree"
+
+if [ -f "${sshfree_path}" ]; then
+    echo "进行 ssh 免密配置，如已配置可跳过"
+
+    read -p "是否已填写配置文件 (y/n)，按其他键跳过 ssh 免密配置 " ssh_configured
+    case "$ssh_configured" in 
+        y|Y ) 
+            cd "${VSDS_PATH}/vsdssshfree-v1.0.0"
+            
+            # 执行 modify
+            ./vsdssshfree m
+            if [ $? -ne 0 ]; then
+                echo "Error: 执行 ./vsdssshfree m 失败"
+                exit 1
+            fi
+            
+            # 执行 fe
+            ./vsdssshfree fe
+            if [ $? -ne 0 ]; then
+                echo "Error: 执行 ./vsdssshfree fe 失败"
+                exit 1
+            fi
+            
+            # 执行 check
+            ./vsdssshfree c
+            if [ $? -ne 0 ]; then
+                echo "Error: 执行 ./vsdssshfree c 失败"
+                exit 1
+            fi
+            ;;
+        n|N ) 
+            echo "请先填写配置文件"
+            echo "退出程序"
+            exit 0
+            ;;
+        * )
+            echo "跳过 ssh 免密配置"
+            echo "程序继续执行"
+            ;;
+    esac
+
+else
+    echo "vsdssshfree 工具不存在，无法执行"
+fi
 
 #执行vsdsinstaller-k -i，安装 DRBD/LINSTOR
 echo "-------------------------------------------------------------------"
-installerk_path="${VSDS_PATH}/vsdsinstaller-k-v1.0.1/vsdsinstaller-k"
+installerk_path="${VSDS_PATH}/vsdsinstaller-k-v1.0.2/vsdsinstaller-k"
 
 if [ -f "${installerk_path}" ]; then
     echo "安装DRBD/LINSTOR，若已安装可跳过"
@@ -103,8 +150,9 @@ if [ -f "${installerk_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdsinstaller-k-v1.0.1"
+            cd "${VSDS_PATH}/vsdsinstaller-k-v1.0.2"
             ./vsdsinstaller-k -i
+            ./vsdsinstaller-k -t
             ;;
         n|N ) 
             echo "退出程序"
@@ -133,23 +181,8 @@ if [ -f "${installeru_path}" ]; then
             # 执行脚本
             cd "${VSDS_PATH}/vsdsinstaller-u-v1.0.1"
             ./vsdsinstaller-u
-            cp /usr/lib/ocf/resource.d/heartbeat/portblock /usr/lib/ocf/resource.d/heartbeat/portblock.bak
-            # cp "${VSDS_PATH}/portblock" /usr/lib/ocf/resource.d/heartbeat/
-            # chmod 755 /usr/lib/ocf/resource.d/heartbeat/portblock
-            # if grep -i "portblock.mod_iptablesversion" /usr/lib/ocf/resource.d/heartbeat/portblock; then
-            #     echo "portblock RA替换成功"
-            # else
-            #     echo "portblock RA替换失败"
-            # fi
-
-            cp /usr/lib/ocf/resource.d/linbit/drbd /usr/lib/ocf/resource.d/linbit/drbd.bak
-            # cp "${VSDS_PATH}/drbd" /usr/lib/ocf/resource.d/linbit/
-            # chmod 755 /usr/lib/ocf/resource.d/linbit/drbd
-            # if grep -i "drbd.mod_notconfiged_retryonce" /usr/lib/ocf/resource.d/linbit/drbd; then
-            #     echo "drbd RA 替换成功"
-            # else
-            #     echo "drbd RA 替换失败"
-            # fi
+            # cp /usr/lib/ocf/resource.d/heartbeat/portblock /usr/lib/ocf/resource.d/heartbeat/portblock.bak
+            # cp /usr/lib/ocf/resource.d/linbit/drbd /usr/lib/ocf/resource.d/linbit/drbd.bak
             ;;
         n|N ) 
             echo "请先填写配置文件"
@@ -204,8 +237,8 @@ case "$choice" in
         systemctl start linstor-controller
         ;;
     n|N ) 
-        echo "跳过开启 linstor-controller"
-        echo "程序继续执行"
+        echo "退出程序"
+        exit 0
         ;;
     * ) 
         echo "跳过开启 linstor-controller"
@@ -284,14 +317,14 @@ if [ -f "${vsdsadm_path}" ]; then
     #     esac
     # done
     echo "配置 LVM 和 LINSTOR 集群，如已配置可以跳过"
-    read -p "是否配置 LVM 和 LINSTOR 集群 (y/Y)，按其他键跳过配置 LVM 和 LINSTOR 集群 " choice
+    read -p "是否配置 LVM 和 LINSTOR 集群 (y/n)，按其他键跳过配置 LVM 和 LINSTOR 集群 " choice
     case "$choice" in 
         y|Y ) 
             # 创建 VG
             # echo "请输入 vg 名"
             # read vgname
             vgname="vgsds"  # 示例
-            echo "请输入设备列表（多个设备以空格隔开）:"
+            echo "请输入设备列表（多个设备以空格隔开）: "
             read -a devices
 
             cd "${VSDS_PATH}/vsdsadm-v1.0.1"
@@ -310,6 +343,8 @@ if [ -f "${vsdsadm_path}" ]; then
             # 创建节点和 IP
             declare -a nodes_ips
             nodenames=()
+
+            echo "* 请务必根据各个节点的 hostname 和实际 IP 进行填写，否则将影响后续配置"
 
             while true; do
                 echo "请输入节点名和 IP 地址，用空格分隔 (输入 'done' 完成):"
@@ -356,6 +391,10 @@ if [ -f "${vsdsadm_path}" ]; then
                 eval $command
             fi
             ;;
+        n|N ) 
+            echo "退出程序"
+            exit 0
+            ;;
         * ) 
             echo "跳过配置 LVM 和 LINSTOR 集群"
             echo "程序继续执行"
@@ -363,6 +402,33 @@ if [ -f "${vsdsadm_path}" ]; then
     esac
 else
     echo "vsdsadm 不存在，无法执行程序"
+fi
+
+# 设置 LINSTOR 集群密码
+echo "-------------------------------------------------------------------"
+vsdsencryptor_path="${VSDS_PATH}/vsdsencryptor-v1.0.0/vsdsencryptor"
+
+if [ -f "${vsdsencryptor_path}" ]; then
+    echo "进行 LINSTOR 集群密码配置，如已配置可跳过"
+
+    read -p "是否已设置 LINSTOR 集群密码 (y/n)，按其他键跳过密码配置 " choice
+    case "$choice" in 
+        y|Y ) 
+            cd "${VSDS_PATH}/vsdsencryptor-v1.0.0"
+            ./vsdsencryptor c
+            ;;
+        n|N ) 
+            echo "退出程序"
+            exit 0
+            ;;
+        * )
+            echo "跳过密码配置"
+            echo "程序继续执行"
+            ;;
+    esac
+
+else
+    echo "vsdsencryptor 工具不存在，无法执行"
 fi
 
 # 执行vsdscoroconf，配置 Corosync
@@ -497,7 +563,6 @@ if [ -f "${csmdeployer_path}" ]; then
             ;;
         * ) 
             echo "跳过部署部署 CoSAN Manager"
-            echo "程序继续执行"
             ;;
     esac
 else
