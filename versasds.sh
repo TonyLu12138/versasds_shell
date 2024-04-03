@@ -19,7 +19,7 @@ esac
 
 # 执行vsdsipconf
 echo "-------------------------------------------------------------------"
-vsdsipconf_path="${VSDS_PATH}/vsdsipconf-v1.0.1/vsdsipconf"
+vsdsipconf_path="${VSDS_PATH}/vsdsipconf-v1.0.2/vsdsipconf"
 
 if [ -f "${vsdsipconf_path}" ]; then
     echo "安装网络配置工具，若已安装可跳过"
@@ -27,7 +27,7 @@ if [ -f "${vsdsipconf_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdsipconf-v1.0.1"
+            cd "${VSDS_PATH}/vsdsipconf-v1.0.2"
             ./vsdsipconf
             ;;
         n|N ) 
@@ -47,7 +47,7 @@ fi
 
 # 执行iptool，配置ip
 echo "-------------------------------------------------------------------"
-iptool_path="${VSDS_PATH}/vsdsiptool-v1.0.0/vsdsiptool"
+iptool_path="${VSDS_PATH}/vsdsiptool-v1.0.1/vsdsiptool"
 
 if [ -f "${iptool_path}" ]; then
     echo "ip 配置，若已配置 ip 可跳过"
@@ -69,14 +69,14 @@ if [ -f "${iptool_path}" ]; then
                     1) 
                         echo "请输入 bonding 网卡名、ip、网络接口1（子网卡1）、网络接口2（子网卡2） 和 bonding 模式"
                         read bond_name ip device1 device2 mode
-                        cd "${VSDS_PATH}/vsdsiptool-v1.0.0"
+                        cd "${VSDS_PATH}/vsdsiptool-v1.0.1"
                         ./vsdsiptool bonding create ${bond_name} -ip ${ip} -d ${device1} ${device2} -m ${mode}
                         ;;
                     2) 
-                        echo "请输入 ip 和 网络接口（网卡）"
-                        read ip device
-                        cd "${VSDS_PATH}/vsdsiptool-v1.0.0"
-                        ./vsdsiptool ip create -ip ${ip} -d ${device}
+                        echo "请输入 ip、网络接口（网卡）、DNS、gateway、子网掩码"
+                        read ip device dns gateway netmask
+                        cd "${VSDS_PATH}/vsdsiptool-v1.0.1"
+                        ./vsdsiptool ip create -ip ${ip} -d ${device} -dns ${dns} -g ${gateway} -m ${netmask}
                         ;;
                     3) break ;;
                     *) echo "无效的选择，请重新输入" ;;
@@ -142,7 +142,7 @@ fi
 
 #执行vsdsinstaller-k -i，安装 DRBD/LINSTOR
 echo "-------------------------------------------------------------------"
-installerk_path="${VSDS_PATH}/vsdsinstaller-k-v1.0.2/vsdsinstaller-k"
+installerk_path="${VSDS_PATH}/vsdsinstaller-k-v1.0.3/vsdsinstaller-k"
 
 if [ -f "${installerk_path}" ]; then
     echo "安装DRBD/LINSTOR，若已安装可跳过"
@@ -150,7 +150,7 @@ if [ -f "${installerk_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdsinstaller-k-v1.0.2"
+            cd "${VSDS_PATH}/vsdsinstaller-k-v1.0.3"
             ./vsdsinstaller-k -i
             ./vsdsinstaller-k -t
             ;;
@@ -170,7 +170,7 @@ fi
 
 # 执行vsdsinstaller-u，安装 VersaSDS - Pacemaker/Corosync/crmsh  + targetcli
 echo "-------------------------------------------------------------------"
-installeru_path="${VSDS_PATH}/vsdsinstaller-u-v1.0.1/vsdsinstaller-u"
+installeru_path="${VSDS_PATH}/vsdsinstaller-u-v1.0.3/vsdsinstaller-u"
 
 if [ -f "${installeru_path}" ]; then
     # echo "安装高可用软件和网络配置工具"
@@ -179,7 +179,7 @@ if [ -f "${installeru_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdsinstaller-u-v1.0.1"
+            cd "${VSDS_PATH}/vsdsinstaller-u-v1.0.3"
             ./vsdsinstaller-u
             # cp /usr/lib/ocf/resource.d/heartbeat/portblock /usr/lib/ocf/resource.d/heartbeat/portblock.bak
             # cp /usr/lib/ocf/resource.d/linbit/drbd /usr/lib/ocf/resource.d/linbit/drbd.bak
@@ -200,7 +200,7 @@ fi
 
 # 执行vsdspreset，VersaSDS 预配置
 echo "-------------------------------------------------------------------"
-preset_path="${VSDS_PATH}/vsdspreset-v1.0.1/vsdspreset"
+preset_path="${VSDS_PATH}/vsdspreset-v1.0.2/vsdspreset"
 
 if [ -f "${preset_path}" ]; then
     echo "VersaSDS 预配置，若已配置可跳过"
@@ -208,7 +208,7 @@ if [ -f "${preset_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdspreset-v1.0.1"
+            cd "${VSDS_PATH}/vsdspreset-v1.0.2"
             ./vsdspreset
             ;;
         n|N ) 
@@ -433,7 +433,7 @@ fi
 
 # 执行vsdscoroconf，配置 Corosync
 echo "-------------------------------------------------------------------"
-coroconf_path="${VSDS_PATH}/vsdscoroconf-v1.0.1/vsdscoroconf"
+coroconf_path="${VSDS_PATH}/vsdscoroconf-v1.1.0/vsdscoroconf"
 
 if [ -f "${coroconf_path}" ]; then
     echo "配置 Corosync，如已配置可以跳过"
@@ -441,7 +441,7 @@ if [ -f "${coroconf_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdscoroconf-v1.0.1"
+            cd "${VSDS_PATH}/vsdscoroconf-v1.1.0"
             # cp corosync.conf.bak /etc/corosync/corosync.conf
             ./vsdscoroconf
             ;;
@@ -460,7 +460,7 @@ fi
 
 # 执行vsdshaconf，配置高可用
 echo "-------------------------------------------------------------------"
-ha_path="${VSDS_PATH}/vsdshaconf-v1.0.1/vsdshaconf"
+ha_path="${VSDS_PATH}/vsdshaconf-v1.1.0/vsdshaconf"
 
 if [ -f "${ha_path}" ]; then
     echo "配置高可用，如已配置可以跳过"
@@ -468,7 +468,7 @@ if [ -f "${ha_path}" ]; then
     case "$choice" in 
         y|Y ) 
             # 执行脚本
-            cd "${VSDS_PATH}/vsdshaconf-v1.0.1"
+            cd "${VSDS_PATH}/vsdshaconf-v1.1.0"
             ./vsdshaconf build -p
             ./vsdshaconf build -l
             # ./vsdshaconf build -v
